@@ -1,5 +1,6 @@
 const uniqueKey = '37376459-60d6298d1e87a90b85928e997'
 
+import Notiflix from 'notiflix';
 import SimpleLightbox from "simplelightbox";
 import "simplelightbox/dist/simple-lightbox.min.css";
 
@@ -25,7 +26,7 @@ let apiUrl = `https://pixabay.com/api/?key=${uniqueKey}&q=${encodeURIComponent(s
 fetch(apiUrl)
     .then(response => response.json())
     .then(data => {
-        let images = data.hits; // Get the array of images from the response
+        let images = data.hits; // array of images from the response
 
         if (images.length > 0) {
         let imageCards = images.map(image => {
@@ -45,14 +46,11 @@ fetch(apiUrl)
     gallery.innerHTML += imageCards.join('');
 
         if (page === 1) {
-            let totalHits = data.totalHits; // Get the total number of images
-            let message = document.createElement('div');
-            message.classList.add('message');
-            message.textContent = `Ура! Знайдено ${totalHits} зображень.`;
-            gallery.insertAdjacentElement('afterbegin', message);
+            let totalHits = data.totalHits; // total number of images
+            Notiflix.Notify.success = `Ура! Знайдено ${totalHits} зображень.`;
         }
 
-        loadMoreBtn.style.display = 'block'; // Show the "Load More" button
+        loadMoreBtn.style.display = 'block'; // Show the Load More button
         page++; // Increment the page number for the next request
 
         let lightbox = new SimpleLightbox('.gallery a'); // Initialize the simple lightbox
