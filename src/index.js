@@ -1,4 +1,4 @@
-import { uniqueKey } from './pixaby_api.js'; 
+import { uniqueKey } from './pixaby_api.js';
 import Notiflix from 'notiflix';
 import SimpleLightbox from "simplelightbox";
 import "simplelightbox/dist/simple-lightbox.min.css";
@@ -13,82 +13,87 @@ let searchForm = document.querySelector('.search-form');
 
 loadMoreBtn.style.display = 'none';
 
-searchForm.addEventListener('submit', function(event) {
-  event.preventDefault();
-  searchQuery = event.target.searchInput.value;
-  page = 1;
-  gallery.innerHTML = '';
-  loadMoreBtn.style.display = 'none';
-  doSearch();
+  let lightbox = new SimpleLightbox('.gallery a'); // Initialize lightbox
+
+searchForm.addEventListener('submit', async function (event) {
+event.preventDefault();
+searchQuery = event.target.searchInput.value.trim();
+page = 1;
+gallery.innerHTML = '';
+loadMoreBtn.style.display = 'none';
+await doSearch();
 });
 
-loadMoreBtn.addEventListener('click', function() {
-  page++;
-  doSearch();
+loadMoreBtn.addEventListener('click', async function () {
+page++;
+await doSearch();
 });
 
-function doSearch() {
-  searchImages(searchQuery, page)
-    .then(data => {
-      let images = data.hits; // array of images from the response
+async function doSearch() {
+  try {
+    const data = await searchImages(searchQuery, page);
 
-      if (images.length > 0) {
-        let imageCards = images.map(image => {
-          return `
-            <div class="card">
-              <a href="${image.largeImageURL}" data-lightbox="gallery">
-                <img src="${image.webformatURL}" alt="${image.tags}">
-              </a>
-              <p>Likes: ${image.likes}</p>
-              <p>Views: ${image.views}</p>
-              <p>Comments: ${image.comments}</p>
-              <p>Downloads: ${image.downloads}</p>
-            </div>
-          `;
-        });
+    let images = data.hits; // array of images from the response
 
-        gallery.insertAdjacentHTML('beforeend', imageCards.join(''));
+    if (images.length > 0) {
+      let imageCards = images.map(image => {
+        return `
+          <div class="card">
+            <a href="${image.largeImageURL}" data-lightbox="gallery">
+              <img src="${image.webformatURL}" alt="${image.tags}">
+            </a>
+            <p>Likes: ${image.likes}</p>
+            <p>Views: ${image.views}</p>
+            <p>Comments: ${image.comments}</p>
+            <p>Downloads: ${image.downloads}</p>
+          </div>
+        `;
+      });
 
-        if (page === 1) {
-          let totalHits = data.totalHits; // total number of images
-          Notiflix.Notify.success(`Ура! Знайдено ${totalHits} зображень.`);
-        }
+      gallery.insertAdjacentHTML('beforeend', imageCards.join(''));
+      lightbox.refresh(); 
 
-        let lightbox = new SimpleLightbox('.gallery a'); // Initialize lightbox
-        
-
-        // Check pagination
-        let showBtn = page < Math.ceil(data.totalHits / 12);
-        if (showBtn) {
-          loadMoreBtn.style.display = 'block'; // Show LM
-        } else {
-          loadMoreBtn.style.display = 'none'; // Hide LM
-        let message = document.createElement('div');
-          message.classList.add('message');
-          message.textContent = "We're sorry, but you've reached the end of search results.";
-          gallery.appendChild(message);
-        }
-      } else {
-        let message = document.createElement('div');
-          message.classList.add('message');
-          message.textContent = "На жаль, зображень не знайдено.";
-          loadMoreBtn.style.display = 'none'; // Hide LM
+      if (page === 1) {
+        let totalHits = data.totalHits; // total number of images
+        Notiflix.Notify.success(`Ура! Знайдено ${totalHits} зображень.`);
       }
-    })
-    .catch(error => console.log(error));
+
+      // Check pagination
+      let showBtn = page < Math.ceil(data.totalHits / 12);
+      if (showBtn) {
+        loadMoreBtn.style.display = 'block'; // Show LM
+      } else {
+        loadMoreBtn.style.display = 'none'; // Hide LM
+        let message = document.createElement('div');
+        message.classList.add('message');
+        message.textContent = "We're sorry, but you've reached the end of search results.";
+        gallery.appendChild(message);
+      }
+    } else {
+      let message = document.createElement('div');
+      message.classList.add('message');
+      message.textContent = "На жаль, зображень не знайдено.";
+      loadMoreBtn.style.display = 'none'; // Hide LM
+      gallery.appendChild(message);
+    }
+  } catch (error) {
+    console.log(error);
+    Notiflix.Notify.failure('Oops! Something went wrong! Try reloading the page!');
+  }
 }
 
-backToTopBtn.addEventListener('click', function() {
-  window.scrollTo({
-    top: 0,
-    behavior: 'smooth'
-  });
+
+backToTopBtn.addEventListener('click', function () {
+window.scrollTo({
+top: 0,
+behavior: 'smooth'
 });
-  
-window.addEventListener('scroll', function() {
-  if (window.scrollY > 500) {
-    backToTopBtn.style.display = 'block';
-  } else {
-    backToTopBtn.style.display = 'none';
-  }
+});
+
+window.addEventListener('scroll', function () {
+if (window.scrollY > 500) {
+backToTopBtn.style.display = 'block';
+} else {
+backToTopBtn.style.display = 'none';
+}
 });
