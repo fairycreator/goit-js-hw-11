@@ -65,7 +65,7 @@ async function doSearch() {
       }
 
       // Check pagination
-      let showBtn = page < Math.ceil(data.totalHits / 12);
+      let showBtn = page < Math.ceil(data.totalHits / 40);
       if (showBtn) {
         loadMoreBtn.style.display = 'block'; // Show LM
       } else {
