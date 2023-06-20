@@ -10,14 +10,19 @@
   <body>
     <!-- ❗️❗️❗️ Add partials like so for every page -->
     <div class="container">
-      <form class="search-form">
-        <input type="text" name="searchInput" />
+      <form class="search-form" id="search-form">
+        <input  type="text"
+                name="searchInput"
+                autocomplete="off"
+                placeholder="Search images..."
+                required/>
         <button type="submit">Search</button>
       </form>
       <div class="gallery"></div>
       <button class="load-more">Load More</button>
       <button class="back-to-top">Back to Top</button>
     </div>
+    <div class="guard"></div>
 
   </body>
 </html>

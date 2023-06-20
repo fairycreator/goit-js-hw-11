@@ -1,9 +1,30 @@
-export const uniqueKey = '37376459-60d6298d1e87a90b85928e997';
+import axios from 'axios';
+import Notiflix from 'notiflix';
 
-export function searchImages(searchQuery, page, perPage) {
-    const apiUrl = `https://pixabay.com/api/?key=${uniqueKey}&q=${encodeURIComponent(searchQuery)}&image_type=photo&orientation=horizontal&safesearch=true`;
+const API_KEY = '37376459-60d6298d1e87a90b85928e997';
+axios.defaults.baseURL = 'https://pixabay.com/api/';
 
-    return fetch(apiUrl)
-        .then(response => response.json())
-        .catch(error => console.log(error));
+//
+async function fetchImages(q, page) {
+    try {
+        const { data } = await axios({
+            params: {
+            key: API_KEY,
+            q,
+            image_type: 'photo',
+            orientation: 'horizontal',
+            safesearch: true,
+            page,
+            per_page: 40,
+        },
+    });
+    return data;
+} catch (error) {
+    console.log(error.message);
+    Notiflix.Notify.failure(
+        `Ooops... Something goes wrong. Please, try again.`
+        );
     }
+}
+
+export { fetchImages };
