@@ -16,12 +16,18 @@ loadMoreBtn.style.display = 'none';
   let lightbox = new SimpleLightbox('.gallery a'); // Initialize lightbox
 
 searchForm.addEventListener('submit', async function (event) {
-event.preventDefault();
-searchQuery = event.target.searchInput.value.trim();
-page = 1;
-gallery.innerHTML = '';
-loadMoreBtn.style.display = 'none';
-await doSearch();
+    event.preventDefault();
+    searchQuery = event.target.searchInput.value.trim();
+
+    if (searchQuery.length === 0) {
+        return;
+    }
+
+    page = 1;
+    gallery.innerHTML = '';
+    loadMoreBtn.style.display = 'none';
+
+    await doSearch();
 });
 
 loadMoreBtn.addEventListener('click', async function () {
