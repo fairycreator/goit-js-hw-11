@@ -1,4 +1,3 @@
-import { uniqueKey } from './pixaby_api.js';
 import Notiflix from 'notiflix';
 import SimpleLightbox from "simplelightbox";
 import "simplelightbox/dist/simple-lightbox.min.css";
@@ -6,6 +5,7 @@ import { searchImages } from './pixaby_api.js';
 
 let searchQuery = '';
 let page = 1;
+let perPage = 40;
 let gallery = document.querySelector('.gallery');
 let loadMoreBtn = document.querySelector('.load-more');
 let backToTopBtn = document.querySelector('.back-to-top');
@@ -37,7 +37,7 @@ await doSearch();
 
 async function doSearch() {
   try {
-    const data = await searchImages(searchQuery, page);
+    const data = await searchImages(searchQuery, page, perPage);
 
     let images = data.hits; // array of images from the response
 
@@ -65,7 +65,7 @@ async function doSearch() {
       }
 
       // Check pagination
-      let showBtn = page < Math.ceil(data.totalHits / 12);
+      let showBtn = page < Math.ceil(data.totalHits / 40);
       if (showBtn) {
         loadMoreBtn.style.display = 'block'; // Show LM
       } else {
